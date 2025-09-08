@@ -1,280 +1,365 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Programa MTB 55 · Ride Tucson</title>
-<meta name="theme-color" content="#0b0b0d">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ride Tucson • Reparaciones</title>
 <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#0c5730">
+<link rel="icon" sizes="192x192" href="icon-192.png">
 <style>
-  :root {
-    --bg:#0b0b0d; --fg:#f7f7f7; --muted:#a8b0b9; --card:#15171c; --border:#2a2f36; --accent:#ffaa3b;
-    --ride:#7bd88f; --workout:#7bb7ff; --rest:#d0d4d9; --diet1:#9bd4ff; --diet2:#9be09b; --diet3:#ffb3c7; --note:#ffe78a; --violet:#c0a9ff;
-  }
-  @media (prefers-color-scheme: light) {
-    :root { --bg:#f6f7f8; --fg:#121317; --muted:#616975; --card:#ffffff; --border:#dce0e6; }
-  }
-  * { box-sizing:border-box }
-  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
-  header{position:sticky;top:0;z-index:2;background:linear-gradient(180deg,var(--bg),rgba(0,0,0,0));padding:14px 16px 8px;display:flex;align-items:center;gap:10px}
-  header img{width:32px;height:32px;border-radius:8px}
-  h1{margin:0;font-size:20px}
-  .sub{color:var(--muted);font-size:12px;margin-top:4px}
-  nav.tabs{display:flex;gap:8px;padding:8px 12px;overflow:auto}
-  .tab{padding:10px 12px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--muted)}
-  .tab.active{color:var(--fg);box-shadow:0 0 0 1px var(--accent) inset}
-  main{max-width:900px;margin:0 auto;padding:8px 12px 100px}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin:10px 0}
-  .row{display:grid;grid-template-columns:28px 1fr 80px;gap:10px;align-items:start}
-  .checkbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:grid;place-items:center;user-select:none}
-  .checkbox.checked{background:var(--accent);border-color:var(--accent);color:#111}
-  .tag{font-size:11px;font-weight:700;border-radius:8px;padding:2px 8px;display:inline-block;margin-left:6px}
-  .t-rodada{background:var(--ride);color:#062b12}
-  .t-ej{background:var(--workout);color:#071b33}
-  .t-des{background:var(--rest);color:#111}
-  .t-yoga{background:var(--violet);color:#1d1137}
-  .desc{font-size:12px;color:var(--muted);white-space:pre-line;margin-top:3px}
-  .dur{font-size:12px;color:var(--muted);text-align:right}
-  .weekbar,.dietbar{display:flex;gap:6px;overflow:auto;padding:6px 2px}
-  .chip{padding:6px 10px;border-radius:999px;background:var(--card);color:var(--muted);border:1px solid var(--border)}
-  .chip.active{color:var(--fg);box-shadow:0 0 0 1px var(--accent) inset}
-  .legend{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:4px 0}
-  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
-  .grid-diet{display:grid;grid-template-columns:110px 1fr 1fr 1fr 110px;gap:8px}
-  .diet-col{border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card)}
-  .diet-col h4{margin:0 0 6px 0;font-size:13px}
-  .diet-item{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;padding:6px 8px;border-radius:10px;border:1px dashed var(--border);margin:6px 0}
-  .diet-item .cb{width:20px;height:20px;border:2px solid var(--border);border-radius:6px;display:grid;place-items:center}
-  .diet-item .cb.on{background:var(--accent);border-color:var(--accent);color:#111}
-  .note{font-size:12px;color:var(--muted)}
-  .btns{display:flex;gap:8px;flex-wrap:wrap;padding:6px 0}
-  button{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:10px 14px;border-radius:12px}
-  .progress{height:10px;background:var(--border);border-radius:999px;overflow:hidden;margin:10px 0}
-  .progress > i{display:block;height:100%;background:var(--accent);width:0%}
-  footer.tip{position:fixed;bottom:12px;left:12px;right:12px;background:rgba(0,0,0,.65);color:#fff;padding:10px 12px;border-radius:12px;font-size:12px;backdrop-filter:blur(6px)}
-  .hidden{display:none}
+:root{
+  --bg:#f6f7f6; --fg:#101411; --muted:#6b726e; --card:#ffffff;
+  --accent:#0c5730; --accent-2:#0f6a3a; --danger:#b00020; --ok:#0c5730;
+  --warn:#a35a00; --border:#e7ece9;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;}
+header{
+  position:sticky; top:0; z-index:10; display:flex; gap:.75rem; align-items:center;
+  padding:.75rem 1rem; background:var(--card); border-bottom:1px solid var(--border);
+}
+header img{height:34px;width:auto}
+header h1{font-size:1.1rem; margin:0; letter-spacing:.3px}
+.container{max-width:1100px; margin:0 auto; padding:1rem}
+.controls{
+  display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:.5rem; margin:.75rem 0;
+}
+.controls input, .controls select, .controls button{
+  padding:.65rem .7rem; border:1px solid var(--border); border-radius:.55rem; background:#fff;
+}
+.controls button.primary{background:var(--accent); color:#fff; border-color:var(--accent)}
+.controls button.ghost{background:#fff}
+.controls button.danger{background:var(--danger); color:#fff; border-color:var(--danger)}
+.controls button:disabled{opacity:.5}
+.grid{
+  display:grid; gap:.6rem;
+}
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:.8rem; padding:1rem;
+}
+form#orderForm{
+  display:grid; grid-template-columns: repeat(6, 1fr); gap:.6rem;
+}
+form#orderForm input, form#orderForm select, form#orderForm textarea{
+  padding:.6rem .7rem; border:1px solid var(--border); border-radius:.55rem; width:100%;
+}
+form#orderForm textarea{grid-column: span 6; min-height:80px; resize:vertical}
+.form-span-2{grid-column: span 2}
+.form-span-3{grid-column: span 3}
+.form-span-6{grid-column: span 6}
+.badge{display:inline-block; font-size:.78rem; padding:.28rem .5rem; border-radius:.5rem; border:1px solid var(--border); background:#fafafa}
+.badge.paid{background:#e9f6ee; color:var(--ok); border-color:#cfe8d7}
+.badge.unpaid{background:#fff3f3; color:#8b1a1a; border-color:#f1d0d0}
+.table{width:100%; border-collapse:collapse}
+.table th, .table td{padding:.6rem .5rem; border-bottom:1px solid var(--border); text-align:left; font-size:.95rem}
+.table tr:hover{background:#fafafa}
+.row-actions{display:flex; gap:.4rem}
+.kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:.8rem; background:#eee; padding:.05rem .35rem; border-radius:.35rem; border:1px solid #ddd}
+footer{color:var(--muted); font-size:.85rem; padding:1rem; text-align:center}
+@media(max-width:900px){
+  .controls{grid-template-columns: 1fr 1fr}
+  form#orderForm{grid-template-columns: repeat(2, 1fr)}
+}
+@media print{
+  header, .controls, #listCard, footer {display:none}
+  #printArea{display:block}
+  body{background:#fff}
+}
+#printArea{display:none}
+.small{font-size:.88rem; color:var(--muted)}
 </style>
 </head>
 <body>
 <header>
-  <img src="icons/icon-192.png" alt="Ride Tucson">
-  <div>
-    <h1>Programa MTB 55</h1>
-    <div class="sub">Ride Tucson · Entrenamiento • Alimentación • Estiramientos • Ayuno & Rodadas • Inicio: 08 Sep 2025</div>
-  </div>
+  <img src="icon-72.png" alt="RT">
+  <h1>Ride Tucson • Reparaciones</h1>
 </header>
 
-<nav class="tabs" id="tabs">
-  <button class="tab active" data-tab="entreno">Entrenamiento</button>
-  <button class="tab" data-tab="dieta">Alimentación</button>
-  <button class="tab" data-tab="ayuno">Ayuno & Rodadas</button>
-  <button class="tab" data-tab="estira">Estiramientos</button>
-  <button class="tab" data-tab="notas">Notas</button>
-</nav>
-
-<main>
-  <section id="entreno">
-    <div class="legend">
-      <span><i style="background:var(--ride)"></i>Rodada</span>
-      <span><i style="background:var(--workout)"></i>Ejercicio casa</span>
-      <span><i style="background:var(--rest)"></i>Descanso</span>
-      <span><i style="background:var(--violet)"></i>Yoga/movilidad</span>
-    </div>
-    <div class="weekbar" id="weekbar"></div>
-    <div class="btns">
-      <button id="prevW">◀ Semana anterior</button>
-      <button id="nextW">Semana siguiente ▶</button>
-      <button id="resetW">Reiniciar checks</button>
-    </div>
-    <div class="progress"><i id="pgW"></i></div>
-    <div id="workList"></div>
+<div class="container grid">
+  <section id="createCard" class="card">
+    <h2 style="margin:0 0 .5rem 0; font-size:1.05rem;">Nueva orden / Editar</h2>
+    <form id="orderForm">
+      <input class="form-span-2" id="cliente" placeholder="Cliente *" required>
+      <input id="telefono" placeholder="Teléfono">
+      <input id="email" type="email" placeholder="Email">
+      <input id="equipo" placeholder="Bici/Equipo *" required>
+      <input id="orden" placeholder="Orden #" >
+      <input id="fechaIngreso" type="date" placeholder="Fecha ingreso *" required>
+      <input id="fechaEstimada" type="date" placeholder="Entrega estimada">
+      <select id="estado">
+        <option value="Recibido">Recibido</option>
+        <option value="En Proceso">En Proceso</option>
+        <option value="Listo">Listo</option>
+        <option value="Entregado">Entregado</option>
+      </select>
+      <select id="pagada">
+        <option value="No">No pagada</option>
+        <option value="Sí">Pagada</option>
+      </select>
+      <input id="monto" type="number" step="0.01" placeholder="Monto total">
+      <input id="abono" type="number" step="0.01" placeholder="Abono">
+      <input id="saldo" type="number" step="0.01" placeholder="Saldo" disabled>
+      <input id="metodo" placeholder="Método de pago (efectivo, tarjeta, etc.)">
+      <textarea id="descripcion" placeholder="Descripción / Notas *" required></textarea>
+      <div class="form-span-6" style="display:flex; gap:.5rem; flex-wrap:wrap">
+        <button type="submit" class="primary">Guardar</button>
+        <button type="button" id="resetBtn" class="ghost">Limpiar</button>
+        <button type="button" id="printBtn" class="ghost">Imprimir ticket</button>
+        <span id="saveInfo" class="small"></span>
+      </div>
+      <input type="hidden" id="editingId">
+    </form>
   </section>
 
-  <section id="dieta" class="hidden">
-    <div class="legend">
-      <span><i style="background:var(--diet1)"></i>12:30 • Romper ayuno</span>
-      <span><i style="background:var(--diet2)"></i>17:00 • Comida fuerte</span>
-      <span><i style="background:var(--diet3)"></i>19:00 • Cena ligera</span>
+  <section class="card">
+    <div class="controls">
+      <input id="q" placeholder="Buscar (cliente, orden, descripción)">
+      <select id="filterEstado">
+        <option value="">Estado: Todos</option>
+        <option>Recibido</option><option>En Proceso</option><option>Listo</option><option>Entregado</option>
+      </select>
+      <select id="filterPagada">
+        <option value="">Pago: Todos</option>
+        <option value="Sí">Pagada</option>
+        <option value="No">No pagada</option>
+      </select>
+      <div style="display:flex; gap:.4rem">
+        <button id="exportBtn" class="ghost">Exportar CSV</button>
+        <label class="ghost" style="display:inline-flex; align-items:center; gap:.3rem; padding:.6rem .7rem; border:1px solid var(--border); border-radius:.55rem; cursor:pointer">
+          Importar CSV
+          <input type="file" id="importFile" accept=".csv" style="display:none">
+        </label>
+      </div>
     </div>
-    <div class="weekbar" id="dietbar"></div>
-    <div class="btns">
-      <button id="prevD">◀ Semana</button>
-      <button id="nextD">Semana ▶</button>
-      <button id="resetD">Reiniciar checks</button>
-    </div>
-    <div class="progress"><i id="pgD"></i></div>
-    <div id="dietGrid"></div>
-  </section>
 
-  <section id="ayuno" class="hidden">
-    <div class="card"><h3>Rodada ligera (&lt;1h)</h3><div class="desc">✅ Mantén el ayuno • Agua/café • Rompe ayuno a las 12:30.
-Ejemplos: pan masa madre con tomate + huevo / yogurt griego + fruta.</div></div>
-    <div class="card"><h3>Rodada media (1–2h)</h3><div class="desc">Opción: mantener ayuno si te sientes bien o romper al terminar.
-Post: batido proteína + plátano / yogurt + miel + semillas.</div></div>
-    <div class="card"><h3>Rodada larga (2–3h)</h3><div class="desc">✅ Rompe el ayuno al terminar (en 30 min).
-Post: batido proteína + avena + fruta / sándwich integral pavo + aguacate.
-Comida fuerte 17:00 • Cena ligera 19:00.</div></div>
-    <div class="card"><h3>Día de fuerza / yoga / movilidad</h3><div class="desc">Mantén ayuno normal. Menos carbohidratos; prioriza proteína + verduras.
-Ej.: ensalada de atún con garbanzos / omelette de claras con espinaca.</div></div>
-  </section>
-
-  <section id="estira" class="hidden">
-    <div class="card"><h3>Post-rodada (10–15 min)</h3><div class="desc">Respiración (10) • Cuádriceps 2×20s/lado • Isquios 2×20s/lado • Glúteos 2×20s/lado • Pantorrillas 2×20s/lado • Niño 30s • Torsión supina 2×20s/lado • Gato/Vaca ×5 • Piernas arriba 30–60s.</div></div>
-    <div id="stretchList"></div>
-  </section>
-
-  <section id="notas" class="hidden">
-    <div class="card">
-      <h3>Notas personales</h3>
-      <textarea id="notes" style="width:100%;min-height:160px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--fg);padding:10px;"></textarea>
-      <div class="btns"><button id="saveNotes">Guardar notas</button><span class="note">Se guardan en tu iPhone (sin internet).</span></div>
+    <div id="listCard">
+      <table class="table" id="ordersTable">
+        <thead>
+          <tr>
+            <th>Orden</th><th>Cliente</th><th>Equipo</th><th>Ingreso</th><th>Estado</th><th>Pago</th><th>Monto</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
     </div>
   </section>
-</main>
+</div>
 
-<footer class="tip" id="iosTip">💡 Consejo iPhone: toca <b>Compartir</b> → <b>Añadir a pantalla de inicio</b> para usarlo como app. Funciona offline.</footer>
+<div id="printArea"></div>
 
-<script>
-if ('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js'); }
+<footer>Funciona sin internet. Para instalar como App: menú del navegador → “Agregar a pantalla de inicio”.</footer>
 
-const tabs = document.querySelectorAll('.tab');
-const sections = { entreno:document.getElementById('entreno'), dieta:document.getElementById('dieta'), ayuno:document.getElementById('ayuno'), estira:document.getElementById('estira'), notas:document.getElementById('notas') };
-tabs.forEach(t=> t.onclick=()=>{ tabs.forEach(x=>x.classList.remove('active')); t.classList.add('active'); Object.values(sections).forEach(s=> s.classList.add('hidden')); sections[t.dataset.tab].classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); });
+<script src="https://cdn.jsdelivr.net/npm/idb@7/build/esm/index.js" type="module"></script>
+<script type="module">
+import { openDB } from 'https://cdn.jsdelivr.net/npm/idb@7/+esm'
 
-const KEY='mtb55_app_v2';
-const state = JSON.parse(localStorage.getItem(KEY) || '{"w":1,"checksW":{},"d":1,"checksD":{},"notes":""}');
-function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+const db = await openDB('rt-reparaciones', 1, {
+  upgrade(db){
+    const store = db.createObjectStore('orders', {keyPath:'id', autoIncrement:true})
+    store.createIndex('by_cliente','cliente')
+    store.createIndex('by_orden','orden')
+  }
+})
 
-const fase1=[
-  {tipo:'ej', titulo:'Core + movilidad', dur:'30 min', detalle:'Plancha 3×30s · Lateral 3×20s/lado · Superman 3×12 · Movilidad 5 min · Estirar 5 min'},
-  {tipo:'rodada', titulo:'Rodada corta', dur:'45–60 min', detalle:'Ritmo suave · Cadencia alta'},
-  {tipo:'des', titulo:'Descanso / yoga', dur:'20 min', detalle:'Movilidad + respiración'},
-  {tipo:'ej', titulo:'Piernas + core', dur:'30 min', detalle:'Sentadillas 3×15 · Zancadas 3×12/leg · Puente glúteo 3×15 · Plancha rodilla-codo 3×10/lado'},
-  {tipo:'rodada', titulo:'Rodada técnica', dur:'60–90 min', detalle:'Curvas fáciles · Bajadas controladas'},
-  {tipo:'rodada', titulo:'Rodada larga', dur:'1.5–2 h', detalle:'Ritmo conversación'},
-  {tipo:'des', titulo:'Descanso / caminata', dur:'30 min', detalle:'Caminar suave'}
-];
-const fase2=[
-  {tipo:'ej', titulo:'Piernas + core', dur:'35 min', detalle:'Sentadillas 3×15 · Zancadas 3×12/leg · Plancha 3×30s · Superman 3×12'},
-  {tipo:'rodada', titulo:'Intervalos 3′', dur:'60 min', detalle:'4–5×3 min fuerte · 3 min suave'},
-  {tipo:'des', titulo:'Descanso / yoga', dur:'20 min', detalle:'Movilidad + respiración'},
-  {tipo:'rodada', titulo:'Rodada técnica', dur:'90 min', detalle:'Senderos fáciles · Curvas + bajadas'},
-  {tipo:'ej', titulo:'Core + fuerza', dur:'30 min', detalle:'Flexiones 3×10 · Sentadillas 3×15 · Puente glúteo 3×15 · Plancha 3×40s'},
-  {tipo:'rodada', titulo:'Rodada larga', dur:'2–3 h', detalle:'Ritmo moderado'},
-  {tipo:'rodada', titulo:'Rodada suave', dur:'45 min', detalle:'Z2 cómodo o descanso'}
-];
-const fase3=[
-  {tipo:'ej', titulo:'Fuerza total', dur:'35 min', detalle:'Flexiones 3×10 · Sentadilla salto 3×10 · Peso muerto mochila 3×12 · Plancha 1′ + Superman 12 (×3)'},
-  {tipo:'rodada', titulo:'Intervalos 1′', dur:'60 min', detalle:'6×1 min fuerte · 2 min suave'},
-  {tipo:'rodada', titulo:'Rodada técnica', dur:'90 min', detalle:'Curvas y bajadas técnicas'},
-  {tipo:'ej', titulo:'Piernas + core + movilidad', dur:'35 min', detalle:'Zancadas 3×12 · Sentadillas 3×15 · Plancha 3×40s · Movilidad 5 min'},
-  {tipo:'rodada', titulo:'Subidas largas', dur:'60–90 min', detalle:'3×8 min ritmo constante'},
-  {tipo:'rodada', titulo:'Rodada larga', dur:'3 h', detalle:'Terreno variado, ritmo controlado'},
-  {tipo:'des', titulo:'Descanso / caminata', dur:'30 min', detalle:'Soltar piernas'}
-];
-const fases=[fase1,fase2,fase3,fase1];
-const semanas=[]; for(let f=0; f<4; f++){ for(let i=0;i<4;i++){ semanas.push(fases[f]); } }
+const el = id => document.getElementById(id)
+const form = el('orderForm')
+const fields = ['cliente','telefono','email','equipo','orden','fechaIngreso','fechaEstimada','estado','pagada','monto','abono','metodo','descripcion']
+const saldo = el('saldo')
 
-function tagClass(t){ return t==='rodada'?'t-rodada':t==='ej'?'t-ej':'t-des'; }
-function iconFor(t){ return t==='rodada'?'🚴':t==='ej'?'🏋️':'🛌'; }
-function wKey(w,d){ return `w${w}d${d}`; }
-
-function renderWeekbar(){
-  const wb=document.getElementById('weekbar'); wb.innerHTML='';
-  for(let w=1; w<=16; w++){ const b=document.createElement('button'); b.className='chip'+(state.w===w?' active':''); b.textContent='Semana '+w; b.onclick=()=>{ state.w=w; save(); renderWork(); window.scrollTo({top:0,behavior:'smooth'}); }; wb.appendChild(b);}
+function computeSaldo(){
+  const m = parseFloat(el('monto').value||'0')
+  const a = parseFloat(el('abono').value||'0')
+  const s = Math.max(0, m - a)
+  saldo.value = s.toFixed(2)
 }
-function renderWork(){
-  renderWeekbar();
-  const list=document.getElementById('workList'); list.innerHTML='';
-  const data=semanas[state.w-1];
-  data.forEach((d,idx)=>{
-    const key=wKey(state.w, idx);
-    const checked=!!state.checksW[key];
-    const row=document.createElement('div'); row.className='card row';
-    row.innerHTML=`<div class="checkbox ${checked?'checked':''}" data-k="${key}">${checked?'✓':''}</div>
-                   <div><div class="title">${iconFor(d.tipo)} ${d.titulo} <span class="tag ${tagClass(d.tipo)}">${d.tipo==='rodada'?'Rodada':d.tipo==='ej'?'Ejercicio':'Descanso'}</span></div>
-                   <div class="desc">${d.detalle}</div></div>
-                   <div class="dur">${d.dur}</div>`;
-    row.querySelector('.checkbox').onclick=()=>{ state.checksW[key]=!state.checksW[key]; save(); renderWork(); progressWork(); };
-    list.appendChild(row);
-  });
+el('monto').addEventListener('input', computeSaldo)
+el('abono').addEventListener('input', computeSaldo)
+
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault()
+  // basic requireds
+  for (const f of ['cliente','equipo','fechaIngreso','descripcion']){
+    if(!el(f).value.trim()){ alert('Falta: ' + f); return }
+  }
+  computeSaldo()
+  const data = Object.fromEntries(fields.map(f=>[f, el(f).value]))
+  data.saldo = saldo.value
+  const editingId = el('editingId').value
+  if (editingId){
+    data.id = Number(editingId)
+    await db.put('orders', data)
+    el('saveInfo').textContent = 'Actualizado ✓'
+  } else {
+    data.creado = new Date().toISOString()
+    await db.add('orders', data)
+    el('saveInfo').textContent = 'Guardado ✓'
+  }
+  await loadOrders()
+  form.reset()
+  saldo.value = ''
+  el('editingId').value = ''
+  setTimeout(()=> el('saveInfo').textContent = '', 1500)
+})
+
+el('resetBtn').addEventListener('click', ()=>{
+  form.reset(); saldo.value=''; el('editingId').value=''
+})
+
+async function loadOrders(){
+  const q = el('q').value.toLowerCase().trim()
+  const fe = el('filterEstado').value
+  const fp = el('filterPagada').value
+  const tx = await db.getAll('orders')
+  const rows = tx
+    .filter(o => {
+      const hay = !q || [o.cliente,o.orden,o.descripcion,o.equipo].some(v => (v||'').toLowerCase().includes(q))
+      const okE = !fe || o.estado === fe
+      const okP = !fp || o.pagada === fp
+      return hay && okE && okP
+    })
+    .sort((a,b)=> (b.creado||'').localeCompare(a.creado||''))
+
+  const tbody = document.getElementById('ordersBody')
+  tbody.innerHTML = ''
+  for (const o of rows){
+    const tr = document.createElement('tr')
+    const badge = o.pagada === 'Sí' ? '<span class="badge paid">Pagada</span>' : '<span class="badge unpaid">No pagada</span>'
+    tr.innerHTML = `
+      <td>${o.orden||'-'}</td>
+      <td>${o.cliente||''}</td>
+      <td>${o.equipo||''}</td>
+      <td>${o.fechaIngreso||''}</td>
+      <td>${o.estado||''}</td>
+      <td>${badge}</td>
+      <td>${(o.monto||'')}</td>
+      <td class="row-actions">
+        <button data-act="edit">Editar</button>
+        <button data-act="toggle">${o.pagada==='Sí'?'Marcar No':'Marcar Sí'}</button>
+        <button data-act="print">Ticket</button>
+        <button data-act="delete" class="danger">Borrar</button>
+      </td>
+    `
+    // actions
+    tr.querySelector('[data-act="edit"]').addEventListener('click', ()=>{
+      for (const f of fields){ el(f).value = o[f]||'' }
+      saldo.value = o.saldo||''
+      el('editingId').value = o.id
+      window.scrollTo({top:0, behavior:'smooth'})
+    })
+    tr.querySelector('[data-act="toggle"]').addEventListener('click', async ()=>{
+      o.pagada = o.pagada==='Sí'?'No':'Sí'
+      await db.put('orders', o); await loadOrders()
+    })
+    tr.querySelector('[data-act="print"]').addEventListener('click', ()=> printTicket(o))
+    tr.querySelector('[data-act="delete"]').addEventListener('click', async ()=>{
+      if(confirm('¿Borrar esta orden?')){ await db.delete('orders', o.id); await loadOrders() }
+    })
+    tbody.appendChild(tr)
+  }
 }
-function progressWork(){ const total=16*7; const done=Object.values(state.checksW).filter(Boolean).length; document.getElementById('pgW').style.width=(done/total*100).toFixed(1)+'%'; }
-document.getElementById('prevW').onclick=()=>{ state.w=Math.max(1,state.w-1); save(); renderWork(); };
-document.getElementById('nextW').onclick=()=>{ state.w=Math.min(16,state.w+1); save(); renderWork(); };
-document.getElementById('resetW').onclick=()=>{ if(confirm('¿Borrar checks de entrenamiento?')){ state.checksW={}; save(); renderWork(); progressWork(); } };
-renderWork(); progressWork();
+['q','filterEstado','filterPagada'].forEach(id=> el(id).addEventListener('input', loadOrders))
 
-// Dieta
-const dietWeeks = [
-  {"Lunes":{"a":"Yogurt griego + frutos rojos","b":"Pollo + arroz integral + ensalada","c":"Crema de verduras + huevo duro","n":"Fuerza"}},
-  {"Martes":{"a":"Smoothie plátano + avena","b":"Pescado al horno + camote","c":"Wrap integral de atún","n":"Rodada ligera"}},
-  {"Miércoles":{"a":"Pan masa madre con tomate","b":"Ensalada garbanzos + quinoa","c":"Sopa de lentejas","n":"Yoga"}},
-  {"Jueves":{"a":"Omelette de espinacas","b":"Pechuga pavo + couscous","c":"Ensalada con atún","n":"Rodada técnica"}},
-  {"Viernes":{"a":"Avena + nueces + canela","b":"Carne magra + arroz jazmín + verduras","c":"Wrap integral de pavo","n":"Rodada suave"}},
-  {"Sábado":{"a":"Pan integral + aguacate + huevo","b":"Salmón + quinoa + ensalada","c":"Sopa minestrone","n":"Rodada larga"}},
-  {"Domingo":{"a":"Smoothie verde (espinaca+piña)","b":"Pollo al grill + camote","c":"Crema de brócoli","n":"Descanso"}}
-];
-function dKey(w,day,slot){ return `d${w}_${day}_${slot}`; }
-function renderDietBar(){
-  const db=document.getElementById('dietbar'); db.innerHTML='';
-  for(let w=1; w<=4; w++){ const b=document.createElement('button'); b.className='chip'+(state.d===w?' active':''); b.textContent='Semana '+w; b.onclick=()=>{ state.d=w; save(); renderDiet(); window.scrollTo({top:0,behavior:'smooth'}); }; db.appendChild(b);}
+function printTicket(o){
+  const area = document.getElementById('printArea')
+  area.innerHTML = `
+  <div style="max-width:720px; margin:0 auto; padding:1rem; font-family: system-ui">
+    <div style="display:flex; align-items:center; gap:.75rem; border-bottom:1px solid #ddd; padding-bottom:.5rem; margin-bottom:.5rem">
+      <img src="icon-72.png" style="height:40px">
+      <div>
+        <div style="font-weight:700">Ride Tucson • Reparaciones</div>
+        <div style="font-size:.9rem; color:#666">Orden ${o.orden||'-'}</div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:.35rem; font-size:.95rem">
+      <div><b>Cliente:</b> ${o.cliente||''}</div>
+      <div><b>Tel:</b> ${o.telefono||''}</div>
+      <div><b>Email:</b> ${o.email||''}</div>
+      <div><b>Equipo:</b> ${o.equipo||''}</div>
+      <div><b>Ingreso:</b> ${o.fechaIngreso||''}</div>
+      <div><b>Entrega estimada:</b> ${o.fechaEstimada||''}</div>
+      <div><b>Estado:</b> ${o.estado||''}</div>
+      <div><b>Pago:</b> ${o.pagada||''}</div>
+    </div>
+    <div style="margin:.5rem 0 0 0"><b>Descripción:</b><br>${(o.descripcion||'').replace(/\n/g,'<br>')}</div>
+    <div style="margin-top:.75rem; display:grid; grid-template-columns: repeat(4,1fr); gap:.35rem">
+      <div><b>Monto:</b> ${o.monto||''}</div>
+      <div><b>Abono:</b> ${o.abono||''}</div>
+      <div><b>Saldo:</b> ${o.saldo||''}</div>
+      <div><b>Método:</b> ${o.metodo||''}</div>
+    </div>
+    <div style="margin-top:1rem; font-size:.85rem; color:#666">Gracias por su preferencia. Ride Tucson EBike & Bike Shop.</div>
+  </div>`
+  window.print()
 }
-function renderDiet(){
-  renderDietBar();
-  const grid=document.getElementById('dietGrid'); grid.innerHTML='';
-  const wrap=document.createElement('div');
-  const week = dietWeeks;
-  const days = Object.keys(week).map((_,i)=>Object.keys(week[i])[0]);
-  days.forEach((day,i)=>{
-    const data = week[i][day];
-    const row=document.createElement('div'); row.className='grid-diet';
-    const cellDay=document.createElement('div'); cellDay.className='diet-col'; cellDay.innerHTML='<b>'+day+'</b>';
-    const colA=document.createElement('div'); colA.className='diet-col'; colA.innerHTML='<h4>12:30</h4>';
-    const colB=document.createElement('div'); colB.className='diet-col'; colB.innerHTML='<h4>17:00</h4>';
-    const colC=document.createElement('div'); colC.className='diet-col'; colC.innerHTML='<h4>19:00</h4>';
-    const colN=document.createElement('div'); colN.className='diet-col'; colN.innerHTML='<h4>Nota</h4><div class="note">'+data.n+'</div>';
-    [['a',data.a,'var(--diet1)'],['b',data.b,'var(--diet2)'],['c',data.c,'var(--diet3)']].forEach(([slot,text,bg],i2)=>{
-      const key=dKey(state.d, day, slot);
-      const checked=!!state.checksD[key];
-      const item=document.createElement('div'); item.className='diet-item'; item.style.background=bg;
-      item.innerHTML = `<div class="cb ${checked?'on':''}" data-k="${key}">${checked?'✓':''}</div><div>${text}</div>`;
-      item.querySelector('.cb').onclick=()=>{ state.checksD[key]=!state.checksD[key]; save(); renderDiet(); progressDiet(); };
-      (i2==0?colA:(i2==1?colB:colC)).appendChild(item);
-    });
-    row.appendChild(cellDay); row.appendChild(colA); row.appendChild(colB); row.appendChild(colC); row.appendChild(colN);
-    wrap.appendChild(row);
-  });
-  grid.appendChild(wrap);
+
+document.getElementById('printBtn').addEventListener('click', ()=>{
+  const o = Object.fromEntries(fields.map(f=>[f, el(f).value]))
+  o.saldo = saldo.value
+  printTicket(o)
+})
+
+// Export CSV
+document.getElementById('exportBtn').addEventListener('click', async ()=>{
+  const rows = await db.getAll('orders')
+  if(!rows.length){ alert('No hay datos para exportar'); return }
+  const cols = ['id'] .concat(fields).concat(['saldo','creado'])
+  const csv = [cols.join(',')].concat(rows.map(r=> cols.map(c=> `"${(r[c]??'').toString().replace(/"/g,'""')}"`).join(','))).join('\n')
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'})
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url; a.download = 'reparaciones.csv'; a.click()
+  URL.revokeObjectURL(url)
+})
+
+// Import CSV
+document.getElementById('importFile').addEventListener('change', async (e)=>{
+  const file = e.target.files[0]
+  if(!file) return
+  const text = await file.text()
+  const lines = text.split(/\r?\n/).filter(Boolean)
+  const header = lines.shift().split(',').map(h=> h.replace(/^"|"$/g,''))
+  const rows = lines.map(line => {
+    const parts = []
+    let cur = '', inQ=false
+    for (let i=0;i<line.length;i++){
+      const ch = line[i]
+      if(ch === '"' ){
+        if (inQ && line[i+1]==='"'){ cur+='"'; i++ } else { inQ = !inQ }
+      } else if(ch===',' and not inQ){
+        parts.push(cur); cur=''
+      } else { cur+=ch }
+    }
+    parts.push(cur)
+    const obj = {}
+    header.forEach((h,i)=> obj[h] = (parts[i]||'').replace(/^"|"$/g,''))
+    if(obj.id) obj.id = Number(obj.id)
+    return obj
+  })
+  // wipe & import
+  if(!confirm('Esto reemplazará el listado existente. ¿Continuar?')) return
+  const tx = db.transaction('orders','readwrite')
+  const store = tx.objectStore('orders')
+  // clear
+  const keys = await store.getAllKeys()
+  await Promise.all(keys.map(k=> store.delete(k)))
+  // put
+  for (const r of rows){ await store.put(r) }
+  await tx.done
+  await loadOrders()
+  alert('Importación completa')
+})
+
+async function registerSW(){
+  if('serviceWorker' in navigator){
+    try { await navigator.serviceWorker.register('./sw.js') } catch(e){ console.warn(e) }
+  }
 }
-function progressDiet(){ const total = 4*7*3; const done = Object.values(state.checksD).filter(Boolean).length; document.getElementById('pgD').style.width=(done/total*100).toFixed(1)+'%'; }
-document.getElementById('prevD').onclick=()=>{ state.d=Math.max(1,state.d-1); save(); renderDiet(); };
-document.getElementById('nextD').onclick=()=>{ state.d=Math.min(4,state.d+1); save(); renderDiet(); };
-document.getElementById('resetD').onclick=()=>{ if(confirm('¿Borrar checks de alimentación?')){ state.checksD={}; save(); renderDiet(); progressDiet(); } };
-renderDiet(); progressDiet();
+registerSW()
 
-// Estiramientos simple checklist
-const stretches=['Cuádriceps 2×20s/lado','Isquiotibiales 2×20s/lado','Glúteos 2×20s/lado','Pantorrillas 2×20s/lado','Niño 30s','Torsión supina 2×20s/lado','Gato/Vaca ×5','Piernas arriba 30–60s'];
-const sList=document.getElementById('stretchList');
-stretches.forEach((t,i)=>{
-  const key='s_'+i; const checked=!!state[key];
-  const row=document.createElement('div'); row.className='card row';
-  row.innerHTML=`<div class="checkbox ${checked?'checked':''}" data-k="${key}">${checked?'✓':''}</div>
-                 <div><div class="title">🧘 ${t} <span class="tag t-yoga">Recuperación</span></div>
-                 <div class="desc">Marca al terminar</div></div>
-                 <div class="dur">30–60 s</div>`;
-  row.querySelector('.checkbox').onclick=()=>{ state[key]=!state[key]; save(); location.reload(); };
-  sList.appendChild(row);
-});
-
-// Notas
-const notes = document.getElementById('notes'); notes.value = state.notes || ''; document.getElementById('saveNotes').onclick=()=>{ state.notes = notes.value; save(); alert('Notas guardadas'); };
-
-// Tip oculto
-let tip=+localStorage.getItem('tipSeen')||0; if(tip>=2) document.getElementById('iosTip').classList.add('hidden'); document.getElementById('iosTip').onclick=()=>{ document.getElementById('iosTip').classList.add('hidden'); localStorage.setItem('tipSeen', (++tip)+''); };
+// initial load
+await loadOrders()
 </script>
 </body>
 </html>
