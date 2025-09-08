@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Programa MTB 55 · Ride Tucson</title>
+<meta name="theme-color" content="#0b0b0d">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+  :root {
+    --bg:#0b0b0d; --fg:#f7f7f7; --muted:#a8b0b9; --card:#15171c; --border:#2a2f36; --accent:#ffaa3b;
+    --ride:#7bd88f; --workout:#7bb7ff; --rest:#d0d4d9; --diet1:#9bd4ff; --diet2:#9be09b; --diet3:#ffb3c7; --note:#ffe78a; --violet:#c0a9ff;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f6f7f8; --fg:#121317; --muted:#616975; --card:#ffffff; --border:#dce0e6; }
+  }
+  * { box-sizing:border-box }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+  header{position:sticky;top:0;z-index:2;background:linear-gradient(180deg,var(--bg),rgba(0,0,0,0));padding:14px 16px 8px;display:flex;align-items:center;gap:10px}
+  header img{width:32px;height:32px;border-radius:8px}
+  h1{margin:0;font-size:20px}
+  .sub{color:var(--muted);font-size:12px;margin-top:4px}
+  nav.tabs{display:flex;gap:8px;padding:8px 12px;overflow:auto}
+  .tab{padding:10px 12px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--muted)}
+  .tab.active{color:var(--fg);box-shadow:0 0 0 1px var(--accent) inset}
+  main{max-width:900px;margin:0 auto;padding:8px 12px 100px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;margin:10px 0}
+  .row{display:grid;grid-template-columns:28px 1fr 80px;gap:10px;align-items:start}
+  .checkbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--border);display:grid;place-items:center;user-select:none}
+  .checkbox.checked{background:var(--accent);border-color:var(--accent);color:#111}
+  .tag{font-size:11px;font-weight:700;border-radius:8px;padding:2px 8px;display:inline-block;margin-left:6px}
+  .t-rodada{background:var(--ride);color:#062b12}
+  .t-ej{background:var(--workout);color:#071b33}
+  .t-des{background:var(--rest);color:#111}
+  .t-yoga{background:var(--violet);color:#1d1137}
+  .desc{font-size:12px;color:var(--muted);white-space:pre-line;margin-top:3px}
+  .dur{font-size:12px;color:var(--muted);text-align:right}
+  .weekbar,.dietbar{display:flex;gap:6px;overflow:auto;padding:6px 2px}
+  .chip{padding:6px 10px;border-radius:999px;background:var(--card);color:var(--muted);border:1px solid var(--border)}
+  .chip.active{color:var(--fg);box-shadow:0 0 0 1px var(--accent) inset}
+  .legend{display:flex;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--muted);padding:4px 0}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .grid-diet{display:grid;grid-template-columns:110px 1fr 1fr 1fr 110px;gap:8px}
+  .diet-col{border:1px solid var(--border);border-radius:12px;padding:10px;background:var(--card)}
+  .diet-col h4{margin:0 0 6px 0;font-size:13px}
+  .diet-item{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;padding:6px 8px;border-radius:10px;border:1px dashed var(--border);margin:6px 0}
+  .diet-item .cb{width:20px;height:20px;border:2px solid var(--border);border-radius:6px;display:grid;place-items:center}
+  .diet-item .cb.on{background:var(--accent);border-color:var(--accent);color:#111}
+  .note{font-size:12px;color:var(--muted)}
+  .btns{display:flex;gap:8px;flex-wrap:wrap;padding:6px 0}
+  button{background:var(--card);border:1px solid var(--border);color:var(--fg);padding:10px 14px;border-radius:12px}
+  .progress{height:10px;background:var(--border);border-radius:999px;overflow:hidden;margin:10px 0}
+  .progress > i{display:block;height:100%;background:var(--accent);width:0%}
+  footer.tip{position:fixed;bottom:12px;left:12px;right:12px;background:rgba(0,0,0,.65);color:#fff;padding:10px 12px;border-radius:12px;font-size:12px;backdrop-filter:blur(6px)}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<header>
+  <img src="icons/icon-192.png" alt="Ride Tucson">
+  <div>
+    <h1>Programa MTB 55</h1>
+    <div class="sub">Ride Tucson · Entrenamiento • Alimentación • Estiramientos • Ayuno & Rodadas • Inicio: 08 Sep 2025</div>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button class="tab active" data-tab="entreno">Entrenamiento</button>
+  <button class="tab" data-tab="dieta">Alimentación</button>
+  <button class="tab" data-tab="ayuno">Ayuno & Rodadas</button>
+  <button class="tab" data-tab="estira">Estiramientos</button>
+  <button class="tab" data-tab="notas">Notas</button>
+</nav>
+
+<main>
+  <section id="entreno">
+    <div class="legend">
+      <span><i style="background:var(--ride)"></i>Rodada</span>
+      <span><i style="background:var(--workout)"></i>Ejercicio casa</span>
+      <span><i style="background:var(--rest)"></i>Descanso</span>
+      <span><i style="background:var(--violet)"></i>Yoga/movilidad</span>
+    </div>
+    <div class="weekbar" id="weekbar"></div>
+    <div class="btns">
+      <button id="prevW">◀ Semana anterior</button>
+      <button id="nextW">Semana siguiente ▶</button>
+      <button id="resetW">Reiniciar checks</button>
+    </div>
+    <div class="progress"><i id="pgW"></i></div>
+    <div id="workList"></div>
+  </section>
+
+  <section id="dieta" class="hidden">
+    <div class="legend">
+      <span><i style="background:var(--diet1)"></i>12:30 • Romper ayuno</span>
+      <span><i style="background:var(--diet2)"></i>17:00 • Comida fuerte</span>
+      <span><i style="background:var(--diet3)"></i>19:00 • Cena ligera</span>
+    </div>
+    <div class="weekbar" id="dietbar"></div>
+    <div class="btns">
+      <button id="prevD">◀ Semana</button>
+      <button id="nextD">Semana ▶</button>
+      <button id="resetD">Reiniciar checks</button>
+    </div>
+    <div class="progress"><i id="pgD"></i></div>
+    <div id="dietGrid"></div>
+  </section>
+
+  <section id="ayuno" class="hidden">
+    <div class="card"><h3>Rodada ligera (&lt;1h)</h3><div class="desc">✅ Mantén el ayuno • Agua/café • Rompe ayuno a las 12:30.
+Ejemplos: pan masa madre con tomate + huevo / yogurt griego + fruta.</div></div>
+    <div class="card"><h3>Rodada media (1–2h)</h3><div class="desc">Opción: mantener ayuno si te sientes bien o romper al terminar.
+Post: batido proteína + plátano / yogurt + miel + semillas.</div></div>
+    <div class="card"><h3>Rodada larga (2–3h)</h3><div class="desc">✅ Rompe el ayuno al terminar (en 30 min).
+Post: batido proteína + avena + fruta / sándwich integral pavo + aguacate.
+Comida fuerte 17:00 • Cena ligera 19:00.</div></div>
+    <div class="card"><h3>Día de fuerza / yoga / movilidad</h3><div class="desc">Mantén ayuno normal. Menos carbohidratos; prioriza proteína + verduras.
+Ej.: ensalada de atún con garbanzos / omelette de claras con espinaca.</div></div>
+  </section>
+
+  <section id="estira" class="hidden">
+    <div class="card"><h3>Post-rodada (10–15 min)</h3><div class="desc">Respiración (10) • Cuádriceps 2×20s/lado • Isquios 2×20s/lado • Glúteos 2×20s/lado • Pantorrillas 2×20s/lado • Niño 30s • Torsión supina 2×20s/lado • Gato/Vaca ×5 • Piernas arriba 30–60s.</div></div>
+    <div id="stretchList"></div>
+  </section>
+
+  <section id="notas" class="hidden">
+    <div class="card">
+      <h3>Notas personales</h3>
+      <textarea id="notes" style="width:100%;min-height:160px;border-radius:12px;border:1px solid var(--border);background:var(--card);color:var(--fg);padding:10px;"></textarea>
+      <div class="btns"><button id="saveNotes">Guardar notas</button><span class="note">Se guardan en tu iPhone (sin internet).</span></div>
+    </div>
+  </section>
+</main>
+
+<footer class="tip" id="iosTip">💡 Consejo iPhone: toca <b>Compartir</b> → <b>Añadir a pantalla de inicio</b> para usarlo como app. Funciona offline.</footer>
+
+<script>
+if ('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js'); }
+
+const tabs = document.querySelectorAll('.tab');
+const sections = { entreno:document.getElementById('entreno'), dieta:document.getElementById('dieta'), ayuno:document.getElementById('ayuno'), estira:document.getElementById('estira'), notas:document.getElementById('notas') };
+tabs.forEach(t=> t.onclick=()=>{ tabs.forEach(x=>x.classList.remove('active')); t.classList.add('active'); Object.values(sections).forEach(s=> s.classList.add('hidden')); sections[t.dataset.tab].classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); });
+
+const KEY='mtb55_app_v2';
+const state = JSON.parse(localStorage.getItem(KEY) || '{"w":1,"checksW":{},"d":1,"checksD":{},"notes":""}');
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+const fase1=[
+  {tipo:'ej', titulo:'Core + movilidad', dur:'30 min', detalle:'Plancha 3×30s · Lateral 3×20s/lado · Superman 3×12 · Movilidad 5 min · Estirar 5 min'},
+  {tipo:'rodada', titulo:'Rodada corta', dur:'45–60 min', detalle:'Ritmo suave · Cadencia alta'},
+  {tipo:'des', titulo:'Descanso / yoga', dur:'20 min', detalle:'Movilidad + respiración'},
+  {tipo:'ej', titulo:'Piernas + core', dur:'30 min', detalle:'Sentadillas 3×15 · Zancadas 3×12/leg · Puente glúteo 3×15 · Plancha rodilla-codo 3×10/lado'},
+  {tipo:'rodada', titulo:'Rodada técnica', dur:'60–90 min', detalle:'Curvas fáciles · Bajadas controladas'},
+  {tipo:'rodada', titulo:'Rodada larga', dur:'1.5–2 h', detalle:'Ritmo conversación'},
+  {tipo:'des', titulo:'Descanso / caminata', dur:'30 min', detalle:'Caminar suave'}
+];
+const fase2=[
+  {tipo:'ej', titulo:'Piernas + core', dur:'35 min', detalle:'Sentadillas 3×15 · Zancadas 3×12/leg · Plancha 3×30s · Superman 3×12'},
+  {tipo:'rodada', titulo:'Intervalos 3′', dur:'60 min', detalle:'4–5×3 min fuerte · 3 min suave'},
+  {tipo:'des', titulo:'Descanso / yoga', dur:'20 min', detalle:'Movilidad + respiración'},
+  {tipo:'rodada', titulo:'Rodada técnica', dur:'90 min', detalle:'Senderos fáciles · Curvas + bajadas'},
+  {tipo:'ej', titulo:'Core + fuerza', dur:'30 min', detalle:'Flexiones 3×10 · Sentadillas 3×15 · Puente glúteo 3×15 · Plancha 3×40s'},
+  {tipo:'rodada', titulo:'Rodada larga', dur:'2–3 h', detalle:'Ritmo moderado'},
+  {tipo:'rodada', titulo:'Rodada suave', dur:'45 min', detalle:'Z2 cómodo o descanso'}
+];
+const fase3=[
+  {tipo:'ej', titulo:'Fuerza total', dur:'35 min', detalle:'Flexiones 3×10 · Sentadilla salto 3×10 · Peso muerto mochila 3×12 · Plancha 1′ + Superman 12 (×3)'},
+  {tipo:'rodada', titulo:'Intervalos 1′', dur:'60 min', detalle:'6×1 min fuerte · 2 min suave'},
+  {tipo:'rodada', titulo:'Rodada técnica', dur:'90 min', detalle:'Curvas y bajadas técnicas'},
+  {tipo:'ej', titulo:'Piernas + core + movilidad', dur:'35 min', detalle:'Zancadas 3×12 · Sentadillas 3×15 · Plancha 3×40s · Movilidad 5 min'},
+  {tipo:'rodada', titulo:'Subidas largas', dur:'60–90 min', detalle:'3×8 min ritmo constante'},
+  {tipo:'rodada', titulo:'Rodada larga', dur:'3 h', detalle:'Terreno variado, ritmo controlado'},
+  {tipo:'des', titulo:'Descanso / caminata', dur:'30 min', detalle:'Soltar piernas'}
+];
+const fases=[fase1,fase2,fase3,fase1];
+const semanas=[]; for(let f=0; f<4; f++){ for(let i=0;i<4;i++){ semanas.push(fases[f]); } }
+
+function tagClass(t){ return t==='rodada'?'t-rodada':t==='ej'?'t-ej':'t-des'; }
+function iconFor(t){ return t==='rodada'?'🚴':t==='ej'?'🏋️':'🛌'; }
+function wKey(w,d){ return `w${w}d${d}`; }
+
+function renderWeekbar(){
+  const wb=document.getElementById('weekbar'); wb.innerHTML='';
+  for(let w=1; w<=16; w++){ const b=document.createElement('button'); b.className='chip'+(state.w===w?' active':''); b.textContent='Semana '+w; b.onclick=()=>{ state.w=w; save(); renderWork(); window.scrollTo({top:0,behavior:'smooth'}); }; wb.appendChild(b);}
+}
+function renderWork(){
+  renderWeekbar();
+  const list=document.getElementById('workList'); list.innerHTML='';
+  const data=semanas[state.w-1];
+  data.forEach((d,idx)=>{
+    const key=wKey(state.w, idx);
+    const checked=!!state.checksW[key];
+    const row=document.createElement('div'); row.className='card row';
+    row.innerHTML=`<div class="checkbox ${checked?'checked':''}" data-k="${key}">${checked?'✓':''}</div>
+                   <div><div class="title">${iconFor(d.tipo)} ${d.titulo} <span class="tag ${tagClass(d.tipo)}">${d.tipo==='rodada'?'Rodada':d.tipo==='ej'?'Ejercicio':'Descanso'}</span></div>
+                   <div class="desc">${d.detalle}</div></div>
+                   <div class="dur">${d.dur}</div>`;
+    row.querySelector('.checkbox').onclick=()=>{ state.checksW[key]=!state.checksW[key]; save(); renderWork(); progressWork(); };
+    list.appendChild(row);
+  });
+}
+function progressWork(){ const total=16*7; const done=Object.values(state.checksW).filter(Boolean).length; document.getElementById('pgW').style.width=(done/total*100).toFixed(1)+'%'; }
+document.getElementById('prevW').onclick=()=>{ state.w=Math.max(1,state.w-1); save(); renderWork(); };
+document.getElementById('nextW').onclick=()=>{ state.w=Math.min(16,state.w+1); save(); renderWork(); };
+document.getElementById('resetW').onclick=()=>{ if(confirm('¿Borrar checks de entrenamiento?')){ state.checksW={}; save(); renderWork(); progressWork(); } };
+renderWork(); progressWork();
+
+// Dieta
+const dietWeeks = [
+  {"Lunes":{"a":"Yogurt griego + frutos rojos","b":"Pollo + arroz integral + ensalada","c":"Crema de verduras + huevo duro","n":"Fuerza"}},
+  {"Martes":{"a":"Smoothie plátano + avena","b":"Pescado al horno + camote","c":"Wrap integral de atún","n":"Rodada ligera"}},
+  {"Miércoles":{"a":"Pan masa madre con tomate","b":"Ensalada garbanzos + quinoa","c":"Sopa de lentejas","n":"Yoga"}},
+  {"Jueves":{"a":"Omelette de espinacas","b":"Pechuga pavo + couscous","c":"Ensalada con atún","n":"Rodada técnica"}},
+  {"Viernes":{"a":"Avena + nueces + canela","b":"Carne magra + arroz jazmín + verduras","c":"Wrap integral de pavo","n":"Rodada suave"}},
+  {"Sábado":{"a":"Pan integral + aguacate + huevo","b":"Salmón + quinoa + ensalada","c":"Sopa minestrone","n":"Rodada larga"}},
+  {"Domingo":{"a":"Smoothie verde (espinaca+piña)","b":"Pollo al grill + camote","c":"Crema de brócoli","n":"Descanso"}}
+];
+function dKey(w,day,slot){ return `d${w}_${day}_${slot}`; }
+function renderDietBar(){
+  const db=document.getElementById('dietbar'); db.innerHTML='';
+  for(let w=1; w<=4; w++){ const b=document.createElement('button'); b.className='chip'+(state.d===w?' active':''); b.textContent='Semana '+w; b.onclick=()=>{ state.d=w; save(); renderDiet(); window.scrollTo({top:0,behavior:'smooth'}); }; db.appendChild(b);}
+}
+function renderDiet(){
+  renderDietBar();
+  const grid=document.getElementById('dietGrid'); grid.innerHTML='';
+  const wrap=document.createElement('div');
+  const week = dietWeeks;
+  const days = Object.keys(week).map((_,i)=>Object.keys(week[i])[0]);
+  days.forEach((day,i)=>{
+    const data = week[i][day];
+    const row=document.createElement('div'); row.className='grid-diet';
+    const cellDay=document.createElement('div'); cellDay.className='diet-col'; cellDay.innerHTML='<b>'+day+'</b>';
+    const colA=document.createElement('div'); colA.className='diet-col'; colA.innerHTML='<h4>12:30</h4>';
+    const colB=document.createElement('div'); colB.className='diet-col'; colB.innerHTML='<h4>17:00</h4>';
+    const colC=document.createElement('div'); colC.className='diet-col'; colC.innerHTML='<h4>19:00</h4>';
+    const colN=document.createElement('div'); colN.className='diet-col'; colN.innerHTML='<h4>Nota</h4><div class="note">'+data.n+'</div>';
+    [['a',data.a,'var(--diet1)'],['b',data.b,'var(--diet2)'],['c',data.c,'var(--diet3)']].forEach(([slot,text,bg],i2)=>{
+      const key=dKey(state.d, day, slot);
+      const checked=!!state.checksD[key];
+      const item=document.createElement('div'); item.className='diet-item'; item.style.background=bg;
+      item.innerHTML = `<div class="cb ${checked?'on':''}" data-k="${key}">${checked?'✓':''}</div><div>${text}</div>`;
+      item.querySelector('.cb').onclick=()=>{ state.checksD[key]=!state.checksD[key]; save(); renderDiet(); progressDiet(); };
+      (i2==0?colA:(i2==1?colB:colC)).appendChild(item);
+    });
+    row.appendChild(cellDay); row.appendChild(colA); row.appendChild(colB); row.appendChild(colC); row.appendChild(colN);
+    wrap.appendChild(row);
+  });
+  grid.appendChild(wrap);
+}
+function progressDiet(){ const total = 4*7*3; const done = Object.values(state.checksD).filter(Boolean).length; document.getElementById('pgD').style.width=(done/total*100).toFixed(1)+'%'; }
+document.getElementById('prevD').onclick=()=>{ state.d=Math.max(1,state.d-1); save(); renderDiet(); };
+document.getElementById('nextD').onclick=()=>{ state.d=Math.min(4,state.d+1); save(); renderDiet(); };
+document.getElementById('resetD').onclick=()=>{ if(confirm('¿Borrar checks de alimentación?')){ state.checksD={}; save(); renderDiet(); progressDiet(); } };
+renderDiet(); progressDiet();
+
+// Estiramientos simple checklist
+const stretches=['Cuádriceps 2×20s/lado','Isquiotibiales 2×20s/lado','Glúteos 2×20s/lado','Pantorrillas 2×20s/lado','Niño 30s','Torsión supina 2×20s/lado','Gato/Vaca ×5','Piernas arriba 30–60s'];
+const sList=document.getElementById('stretchList');
+stretches.forEach((t,i)=>{
+  const key='s_'+i; const checked=!!state[key];
+  const row=document.createElement('div'); row.className='card row';
+  row.innerHTML=`<div class="checkbox ${checked?'checked':''}" data-k="${key}">${checked?'✓':''}</div>
+                 <div><div class="title">🧘 ${t} <span class="tag t-yoga">Recuperación</span></div>
+                 <div class="desc">Marca al terminar</div></div>
+                 <div class="dur">30–60 s</div>`;
+  row.querySelector('.checkbox').onclick=()=>{ state[key]=!state[key]; save(); location.reload(); };
+  sList.appendChild(row);
+});
+
+// Notas
+const notes = document.getElementById('notes'); notes.value = state.notes || ''; document.getElementById('saveNotes').onclick=()=>{ state.notes = notes.value; save(); alert('Notas guardadas'); };
+
+// Tip oculto
+let tip=+localStorage.getItem('tipSeen')||0; if(tip>=2) document.getElementById('iosTip').classList.add('hidden'); document.getElementById('iosTip').onclick=()=>{ document.getElementById('iosTip').classList.add('hidden'); localStorage.setItem('tipSeen', (++tip)+''); };
+</script>
+</body>
+</html>
